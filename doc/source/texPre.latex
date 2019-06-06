@@ -1,0 +1,33 @@
+\usepackage{ctex}
+\usepackage{fontspec} %Font package
+
+
+\setmainfont{WenQuanYi Micro Hei Mono}
+\setsansfont{WenQuanYi Micro Hei Mono}
+\setmonofont{WenQuanYi Micro Hei Mono}
+\newcommand{\shattuckitemaketitle}{
+	\maketitle
+}
+\makeatletter
+\def\@maketitle{
+	\newpage
+	\null
+	\vskip 2em
+	\begin{center}
+		\let \footnote \thanks
+		{\zihao{-0} CarTracker \par}
+		\vskip 1.5em
+		{\zihao{-0} 文档 \par}
+		\vskip 5.5em
+		{\large
+		\lineskip .5em
+		\begin{tabular}[t]{c}
+			\zihao{4}\@author
+		\end{tabular}\par}
+		\vskip 1em
+			{\heiti\zihao{4}\itshape\py@release \releaseinfo}\par
+	\end{center}
+	\par
+	\vskip 1.5em}
+\makeatother
+
