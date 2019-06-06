@@ -3,12 +3,41 @@ import ustruct as struct
 from ubinascii import hexlify
 
 class MQTTException(Exception):
+    """MQTT模块异常
+    
+    :param Exception: [description]
+    :type Exception: [type]
+    """
     pass
 
 class MQTTClient:
+    """MQTT客户端。
+    
+    该类用于实现通过板载的Wifi模块和硬件厂商提供的usocket接口，模拟MQTT客户端的行为，向远程MQTT服务器发送数据。
+    
+    :raises MQTTException: 在出现MQTT协议错误时抛出
+    :raises OSError: 出现系统IO错误时抛出
+    """
 
     def __init__(self, client_id, server, port=0, user=None, password=None, keepalive=0,
                  ssl=False, ssl_params={}):
+        """MQTT客户端构造函数
+        
+        :param client_id: MQTT客户端ID
+        :type client_id: str
+        :param server: 服务器域名或IP
+        :type server: string
+        :param port: 服务器监听MQTT请求的端口, defaults to 0
+        :type port: int, optional
+        :param user: 是否开启用户控制, defaults to None
+        :type user: Boolean, optional
+        :param password: 用户密码, defaults to None
+        :type password: string, optional
+        :param keepalive: 心跳包发送间隔, defaults to 0
+        :type keepalive: int, optional
+        :param ssl: 是否启用套接字层, defaults to False
+        :type ssl: Boolean, optional
+        """
         if port == 0:
             port = 8883 if ssl else 1883
         self.client_id = client_id
@@ -28,10 +57,20 @@ class MQTTClient:
         self.lw_retain = False
 
     def _send_str(self, s):
+        """通过socket发送字符串
+        
+        :param s: 即将发送的字符串
+        :type s: str
+        """
         self.sock.send(struct.pack("!H", len(s)))
         self.sock.send(s)
 
     def _recv_len(self):
+        """返回socket缓冲区长度
+        
+        :return: 缓冲区长度
+        :rtype: int
+        """
         n = 0
         sh = 0
         while 1:
@@ -42,9 +81,27 @@ class MQTTClient:
             sh += 7
 
     def set_callback(self, f):
+        """设置订阅回调
+
+        :todo: 尚未实现
+        
+        :param f: 函数对象
+        :type f: Callable
+        """
         self.cb = f
 
     def set_last_will(self, topic, msg, retain=False, qos=0):
+        """设置Lastwill信息
+        
+        :param topic: MQTT 会话名称
+        :type topic: str
+        :param msg: lastwill消息内容
+        :type msg: str
+        :param retain: 是否重发, defaults to False
+        :type retain: bool, optional
+        :param qos: qos等级, defaults to 0
+        :type qos: int, optional
+        """
         assert 0 <= qos <= 2
         assert topic
         self.lw_topic = topic
@@ -53,6 +110,11 @@ class MQTTClient:
         self.lw_retain = retain
 
     def connect(self, clean_session=True):
+        """尝试连接到远程MQTT服务器
+        
+        :param clean_session: 是否重新连接, defaults to True
+        :type clean_session: bool, optional
+        """
         self.sock = socket.socket()
         addr = None
         addr = socket.getaddrinfo(self.server, self.port)[0][-1]
@@ -101,13 +163,28 @@ class MQTTClient:
         return resp[2] & 1
 
     def disconnect(self):
+        """断开与远程服务器的连接
+        """
         self.sock.send(b"\xe0\0")
         self.sock.close()
 
     def ping(self):
+        """向远程服务器发送Ping请求
+        """
         self.sock.send(b"\xc0\0")
 
     def publish(self, topic, msg, retain=False, qos=0):
+        """向特定的Topic发布一条消息
+        
+        :param topic: MQTT Topic名称
+        :type topic: str
+        :param msg: 要发送的消息
+        :type msg: BytesArray
+        :param retain: 是否重发, defaults to False
+        :type retain: bool, optional
+        :param qos: qos等级, defaults to 0
+        :type qos: int, optional
+        """
         pkt = bytearray(b"\x30\0\0\0")
         pkt[0] |= qos << 1 | retain
         sz = 2 + len(topic) + len(msg)
@@ -143,6 +220,10 @@ class MQTTClient:
             assert 0
 
     def wait_msg(self):
+        """阻塞的等待服务器回复消息
+        
+        :rtype: [type]
+        """
         res = self.sock.recv(1)
         self.sock.setblocking(True)
         if res is None:
@@ -175,5 +256,8 @@ class MQTTClient:
             assert 0
 
     def check_msg(self):
+        """获取一条消息
+        
+        """
         self.sock.setblocking(False)
         return self.wait_msg()
