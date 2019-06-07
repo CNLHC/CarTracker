@@ -1,8 +1,3 @@
-.. 小车追踪DEMO documentation master file, created by
-   sphinx-quickstart on Thu Jun  6 08:01:35 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 小车追踪DEMO 文档
 ========================================
 
@@ -10,6 +5,13 @@
    :maxdepth: 2
 
 
-    需求文档 <requirements/index.rst>
-    设计文档 <design/index.rst>
+    背景和目的 <range/index.rst>
+    需求分析 <requirements/index.rst>
+    方法概述 <method/index.rst>
+    软件设计 <design/index.rst>
+    软件测试 <testReport/index.rst>
+    编程规范 <standard/index.rst>
+    现场演示 <show/index.rst>
+    结论 <conclusion/index.rst>
 
+    

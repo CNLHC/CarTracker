@@ -19,7 +19,7 @@ extensions = [
     'sphinxcontrib.plantuml',
     'sphinx.ext.graphviz',
     'sphinx.ext.viewcode',
-
+    'sphinx.ext.autosectionlabel',
 ]
 class_members_toctree = False
 grossular_server = "http://ali.cnworkshop.xyz:3000"
@@ -58,4 +58,5 @@ autodoc_default_options = {
     'undoc-members': True,
     'exclude-members': 'sensor,pyb'
 }
+
 autodoc_mock_imports = ["sensor","pyb","image","usocket","network","ustruct","ubinascii","openmv.main"]
